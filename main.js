@@ -28,6 +28,7 @@ function addMessage(text, isUser) {
 
 // Function to handle AI response
 async function getAIResponse(userMessage) {
+  userMessage=userMessage+"can you answer this in a presentable way aswell please"
   try {
     const response = await ai.models.generateContent({
       model: "gemini-2.0-flash",
