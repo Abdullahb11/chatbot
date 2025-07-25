@@ -1,5 +1,7 @@
 {
-  "routes": [
-    { "src": "/api/chat", "dest": "/api/chat.js" }
-  ]
+  "buildCommand": "npm run build",
+  "devCommand": "npm run dev",
+  "installCommand": "npm install",
+  "framework": "vite",
+  "outputDirectory": "dist"
 }
