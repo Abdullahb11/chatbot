@@ -1,0 +1,19 @@
+<input id="userInput" placeholder="Ask something..." />
+<button onclick="sendMessage()">Send</button>
+<div id="chat"></div>
+
+<script>
+  async function sendMessage() {
+    const msg = document.getElementById("userInput").value;
+    document.getElementById("chat").innerHTML += `<p><b>You:</b> ${msg}</p>`;
+
+    const res = await fetch("/api/gemini", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userMessage: msg })
+    });
+
+    const data = await res.json();
+    document.getElementById("chat").innerHTML += `<p><b>Gemini:</b> ${data.reply}</p>`;
+  }
+</script>
