@@ -36,20 +36,21 @@ async function getAIResponse(userMessage) {
 
     let result = response.text;
 
-    // Convert headings like "* Heading:" → "**Heading:**\n"
-    result = result.replace(/^\s*\*\s*(.+?):\s*$/gm, (match, p1) => {
-      return `**${p1.trim()}:**\n`;
-    });
+    // Step 1: Fix numbered headings like "1. The Sun:"
+    result = result.replace(/(^|\n)\s*\d+\.\s+([^:\n]+):/g, '\n**$2:**\n');
 
-    // Standardize other bullet points: "* Point" → "  - Point"
-    result = result.replace(/^\s*\*\s+/gm, '  - ');
+    // Step 2: Fix bullet-style headings like "* Dwarf Planets:"
+    result = result.replace(/(^|\n)\s*\*\s+([^:\n]+):/g, '\n**$2:**\n');
 
-    // Remove all bold/italic markdown leftovers
+    // Step 3: Add newlines before standard bullet points
+    result = result.replace(/(^|\n)\s*-\s+/g, '\n- ');
+
+    // Step 4: Optional cleanup of triple/single asterisks and spacing
     result = result
-      .replace(/\*\*\*(.*?)\*\*\*/g, '$1')  // remove ***bold***
-      .replace(/\*\*(.*?)\*\*/g, '$1')      // remove **bold**
-      .replace(/\*(.*?)\*/g, '$1')          // remove *italic*
-      .replace(/\n{2,}/g, '\n')             // collapse multiple newlines
+      .replace(/\*\*\*(.*?)\*\*\*/g, '$1')   // remove ***
+      .replace(/\*\*(.*?)\*\*/g, '**$1**')   // keep double asterisks
+      .replace(/\*(.*?)\*/g, '$1')           // remove *
+      .replace(/\n{2,}/g, '\n\n')            // ensure double newlines for paragraphs
       .trim();
 
     return result;
@@ -59,6 +60,7 @@ async function getAIResponse(userMessage) {
     return "Sorry, I encountered an error. Please try again.";
   }
 }
+
 
 
 // Function to handle send button click
