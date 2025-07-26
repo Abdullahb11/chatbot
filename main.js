@@ -28,15 +28,7 @@ function addMessage(text, isUser) {
 
 // Function to handle AI response
 async function getAIResponse(userMessage) {
-  userMessage=userMessage+"Respond using clear headings, line breaks, and bullet points. Do not use asterisks (*), markdown, or bold formatting. Just clean readable text like:Heading
-- bullet 1
-- bullet 2
-  - sub bullet
-Example:
-- This is a sample format
-- Avoid **this**, *this*, or - - this
-  and do not mention in the answer that I asked you to answer like this 
-"
+  userMessage=userMessage+"Respond using clear headings, line breaks, and bullet points. Do not use asterisks (*), markdown, or bold formatting. Just clean readable text like:Headin- bullet 1- bullet 2 - sub bulletExample:- This is a sample format- Avoid **this**, *this*, or - - this and do not mention in the answer that I asked you to answer like this "
   try {
     const response = await ai.models.generateContent({
       model: "gemini-2.0-flash",
