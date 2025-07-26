@@ -34,16 +34,22 @@ async function getAIResponse(userMessage) {
       contents: userMessage,
     });
 
-    // Get the raw response text
     let result = response.text;
 
-    // Clean it AFTER receiving from Gemini
+    // Convert headings like "* Heading:" → "**Heading:**\n"
+    result = result.replace(/^\s*\*\s*(.+?):\s*$/gm, (match, p1) => {
+      return `**${p1.trim()}:**\n`;
+    });
+
+    // Standardize other bullet points: "* Point" → "  - Point"
+    result = result.replace(/^\s*\*\s+/gm, '  - ');
+
+    // Remove all bold/italic markdown leftovers
     result = result
       .replace(/\*\*\*(.*?)\*\*\*/g, '$1')  // remove ***bold***
       .replace(/\*\*(.*?)\*\*/g, '$1')      // remove **bold**
       .replace(/\*(.*?)\*/g, '$1')          // remove *italic*
-      .replace(/\n{2,}/g, '\n')             // collapse double newlines to single
-      .replace(/^\s*[-•]\s*/gm, '  - ')     // standardize bullet points
+      .replace(/\n{2,}/g, '\n')             // collapse multiple newlines
       .trim();
 
     return result;
@@ -53,6 +59,7 @@ async function getAIResponse(userMessage) {
     return "Sorry, I encountered an error. Please try again.";
   }
 }
+
 
 // Function to handle send button click
 async function handleSend() {
