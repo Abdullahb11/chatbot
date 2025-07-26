@@ -28,17 +28,26 @@ function addMessage(text, isUser) {
 
 // Function to handle AI response
 async function getAIResponse(userMessage) {
-  userMessage=userMessage.replace(/\*\*\*(.*?)\*\*\*/g, '$1')  // remove ***bold***
-    .replace(/\*\*(.*?)\*\*/g, '$1')      // remove **bold**
-    .replace(/\*(.*?)\*/g, '$1')          // remove *italic*
-    .replace(/\n{2,}/g, '\n')             // collapse double newlines to single
-    .trim();
-    try {
+  try {
     const response = await ai.models.generateContent({
       model: "gemini-2.0-flash",
       contents: userMessage,
     });
-    return response.text;
+
+    // Get the raw response text
+    let result = response.text;
+
+    // Clean it AFTER receiving from Gemini
+    result = result
+      .replace(/\*\*\*(.*?)\*\*\*/g, '$1')  // remove ***bold***
+      .replace(/\*\*(.*?)\*\*/g, '$1')      // remove **bold**
+      .replace(/\*(.*?)\*/g, '$1')          // remove *italic*
+      .replace(/\n{2,}/g, '\n')             // collapse double newlines to single
+      .replace(/^\s*[-•]\s*/gm, '  - ')     // standardize bullet points
+      .trim();
+
+    return result;
+
   } catch (error) {
     console.error("Error:", error.message);
     return "Sorry, I encountered an error. Please try again.";
